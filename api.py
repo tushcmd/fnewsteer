@@ -1,7 +1,7 @@
 import datetime
 from flask import Flask, jsonify, render_template
 from ff_calendar import FFCcalendar
-from datetime import timezone  # Add this import
+from datetime import timezone
 
 app = Flask(__name__)
 calendar = FFCcalendar(cache_dir="data", ttl_seconds=3600)  # 1 hour
