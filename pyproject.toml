@@ -10,4 +10,5 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
     "uvicorn[standard]>=0.40.0",
+    "tzdata>=2024.1",  # required for zoneinfo on platforms without system tzdata (e.g. Windows)
 ]
