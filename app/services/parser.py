@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-from app.models import NewsEvent
+from app.schemas.event_models import NewsEvent
 from app.core.config import (
     IMPACT_HIGH,
     IMPACT_MEDIUM,

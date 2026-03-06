@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timezone
-from app.models import NewsEvent, BlockingEvent, CheckResponse, BlackoutZone, BlackoutZonesResponse
+from app.schemas.event_models import NewsEvent, BlockingEvent, CheckResponse, BlackoutZone, BlackoutZonesResponse
 from app.core.config import KNOWN_CURRENCIES
 
 logger = logging.getLogger(__name__)

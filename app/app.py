@@ -7,7 +7,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Security, status
 from fastapi.security.api_key import APIKeyHeader
 
 # use package-qualified imports so modules run inside `uvicorn` subprocesses
-from app.models import BlackoutZonesResponse, CheckResponse, UpcomingNewsResponse
+from app.schemas.event_models import BlackoutZonesResponse, CheckResponse, UpcomingNewsResponse
 from app.services.calendar import cache_age_seconds, get_calendar, invalidate_cache
 from app.services.checker import build_blackout_zones, check_safe_to_trade
 from app.services.parser import normalize_events
