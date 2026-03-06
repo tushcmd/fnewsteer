@@ -1,12 +1,11 @@
 [project]
 name = "fnewsteer"
 version = "0.1.0"
-description = "Add your description here"
+description = "Fundamental Analysis (News) Steer — loss-prevention API for price action traders"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi[standard]>=0.128.8",
-    "flask>=3.1.2",
     "python-dotenv>=1.2.1",
     "uvicorn[standard]>=0.40.0",
     "tzdata>=2024.1",  # required for zoneinfo on platforms without system tzdata (e.g. Windows)
