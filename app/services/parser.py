@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timezone
-from zoneinfo import ZoneInfo
-from models import NewsEvent
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from app.models import NewsEvent
 from app.core.config import (
     IMPACT_HIGH,
     IMPACT_MEDIUM,
@@ -11,10 +11,26 @@ from app.core.config import (
 )
 from datetime import timedelta
 
+
+# Since Windows installations of Python typically lack the IANA
+# timezone database, we depend on the tzdata package.  If someone
+# forgets to install it the constructor below will raise a
+# ZoneInfoNotFoundError; we catch it and fall back to UTC with a
+# warning so the app can still start and tests can run.
+try:
+    FF_TIMEZONE = ZoneInfo("America/New_York")
+except ZoneInfoNotFoundError:
+    import logging
+
+    logging.getLogger(__name__).warning(
+        "tzdata not available; defaulting to UTC for FF_TIMEZONE."
+        " Install the 'tzdata' package to enable local time parsing."
+    )
+    FF_TIMEZONE = timezone.utc
+
 logger = logging.getLogger(__name__)
 
-# FF JSON timestamps are in US/Eastern time
-FF_TIMEZONE = ZoneInfo("America/New_York")
+# FF JSON timestamps are in US/Eastern time (defined above with fallback)
 
 
 def _parse_ff_datetime(date_str: str) -> datetime:
