@@ -102,7 +102,7 @@ async def upcoming(
     raw = await get_calendar()
     currencies = None
     if currency:
-        from app.services.checker import parse_symbol
+        from api.services.checker import parse_symbol
         currencies = parse_symbol(currency)
 
     events = normalize_events(
@@ -194,7 +194,7 @@ async def blackout_zones(
     raw = await get_calendar()
     currencies = None
     if currency:
-        from app.services.checker import parse_symbol
+        from api.services.checker import parse_symbol
         currencies = parse_symbol(currency)
 
     events = normalize_events(
