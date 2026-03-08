@@ -1,0 +1,1 @@
+print(f"Requests with Session(): {time.time() - start_time} seconds.")
