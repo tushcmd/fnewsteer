@@ -2,7 +2,18 @@
 
 > _"You might be a great surfer, but don't paddle out into a hurricane unaware."_
 
-A loss-prevention API for price action traders. FNEWSTEER tells your algo bot when **not** to trade by flagging high-impact news blackout windows — so technically sound setups don't get blindsided by scheduled volatility events.
+A loss-prevention API for price action traders. FNEWSTEER tells your algo bot when **not** to trade by flagging high-impact news blackout windows — so technically sound setups don't get blindsided by scheduled volatility events. Monorepo managed with **uv workspaces**.
+
+---
+
+## Packages
+
+| Package         | Path            | What it does                                                  |
+| --------------- | --------------- | ------------------------------------------------------------- |
+| `fnewsteer-api` | `packages/api/` | FastAPI backend — fetches ForexFactory, serves REST endpoints |
+| `fnewsteer-mcp` | `packages/mcp/` | MCP server — exposes news tools to AI agents (Claude, Cursor) |
+
+The MCP package **imports directly from the API service layer** — no HTTP calls between them, no code duplication.
 
 ---
 
@@ -18,32 +29,30 @@ For price action traders, fundamental/news analysis is not a profit model — it
 
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) installed
 
-### Run locally
-
 ```bash
 # Clone and enter the project
 cd fnewsteer
 
-# Create your env file
+# 2. Configure environment
 cp .env.example .env
-# Edit .env and set FNEWSTEER_API_KEY
+# Edit .env — set FNEWSTEER_API_KEY at minimum
 
-# Install dependencies and run
+# 3. Install everything (single command, shared lockfile)
 uv sync
-uv run uvicorn main:app --reload
+
+# 4. Run the API
+uv run --package fnewsteer-api uvicorn main:app --reload
+# → http://localhost:8000/docs
+
+# 5. Run the MCP server (stdio — for Claude Desktop)
+uv run --package fnewsteer-mcp python -m fnewsteer_mcp
+
+# 5b. Run the MCP server (SSE — for remote clients)
+uv run --package fnewsteer-mcp python -m fnewsteer_mcp --transport sse
+# → http://localhost:8001
 ```
 
 API is now live at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
-
-### Run with Docker
-
-```bash
-# Build
-docker build -t fnewsteer .
-
-# Run
-docker run -p 8000:8000 --env-file .env fnewsteer
-```
 
 ---
 
@@ -202,6 +211,75 @@ if is_safe_to_trade("EURUSD"):
 else:
     print("Sitting on hands — news window active.")
 ```
+
+---
+
+## MCP Tools
+
+| Tool                      | Description                                       |
+| ------------------------- | ------------------------------------------------- |
+| `check_safe_to_trade_now` | **Primary.** SAFE/NOT SAFE for a symbol right now |
+| `get_upcoming_events`     | Full week calendar, filterable by currency        |
+| `get_blackout_zones`      | Flat avoid-list (human + JSON). For backtesting   |
+| `refresh_calendar`        | Force-bust the FF cache                           |
+| `get_server_health`       | Verify data layer is live                         |
+
+### Claude Desktop setup
+
+Edit `claude_desktop_config.json` at:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "fnewsteer": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/absolute/path/to/fnewsteer-workspace",
+        "--package",
+        "fnewsteer-mcp",
+        "python",
+        "-m",
+        "fnewsteer_mcp"
+      ],
+      "env": {
+        "FNEWSTEER_API_KEY": "your-key"
+      }
+    }
+  }
+}
+```
+
+See `packages/mcp/claude_desktop_config.json` for the ready-to-use snippet.
+
+---
+
+<!-- ## Docker
+
+Each package has its own Dockerfile. Both are built from the workspace root
+so the builder has access to both `packages/` directories.
+
+```bash
+# API
+docker build -f packages/api/Dockerfile -t fnewsteer-api .
+
+# MCP SSE server
+docker build -f packages/mcp/Dockerfile -t fnewsteer-mcp .
+
+# Run both
+docker run -p 8000:8000 --env-file .env fnewsteer-api
+docker run -p 8001:8001 --env-file .env fnewsteer-mcp
+``` -->
+
+<!-- > **Important:** Build context must be the **workspace root** (`-f path/to/Dockerfile .`),
+> not the package directory, because the Dockerfiles copy from both `packages/api/` and
+> `packages/mcp/`.
+
+--- -->
 
 ---
 
