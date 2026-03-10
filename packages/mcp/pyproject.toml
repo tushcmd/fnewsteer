@@ -1,10 +1,13 @@
 [project]
 name = "fnewsteer-mcp"
 version = "0.1.0"
-description = "Market Condition Parser"
-readme = "README.md"
-requires-python = ">=3.14"
+description = "FNEWSTEER MCP server — news loss-prevention tools for AI agents"
+requires-python = ">=3.11"
 dependencies = [
-    "httpx>=0.28.1",
     "mcp[cli]>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "fnewsteer-api",
 ]
+
+[tool.uv.sources]
+fnewsteer-api = { workspace = true }

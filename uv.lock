@@ -336,14 +336,16 @@ name = "fnewsteer-mcp"
 version = "0.1.0"
 source = { editable = "packages/mcp" }
 dependencies = [
-    { name = "httpx" },
+    { name = "fnewsteer-api" },
     { name = "mcp", extra = ["cli"] },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "fnewsteer-api", editable = "packages/api" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.0.0" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
 ]
 
 [[package]]
