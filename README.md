@@ -25,10 +25,6 @@ For price action traders, fundamental/news analysis is not a profit model — it
 
 ## Quickstart
 
-### Prerequisites
-
-- [uv](https://docs.astral.sh/uv/getting-started/installation/) installed
-
 ```bash
 # Clone and enter the project
 cd fnewsteer
