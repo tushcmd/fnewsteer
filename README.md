@@ -37,7 +37,7 @@ cd fnewsteer
 
 2. Configure environment
 
-````bash
+```bash
 cp .env.example .env
 # Edit .env — set FNEWSTEER_API_KEY at minimum
 ```
@@ -61,7 +61,7 @@ uv run --package fnewsteer-api uvicorn main:app --reload
 uv run --package fnewsteer-mcp python -m fnewsteer_mcp
 ```
 
-5b. Run the MCP server (SSE — for remote clients)
+6. (Optional) Run the MCP server in SSE mode for remote clients
 
 ```bash
 uv run --package fnewsteer-mcp python -m fnewsteer_mcp --transport sse
@@ -303,5 +303,4 @@ docker run -p 8001:8001 --env-file .env fnewsteer-mcp
 
 News data is sourced from the [ForexFactory](https://www.forexfactory.com/) JSON calendar feed and cached in memory for 60 minutes. All timestamps are normalized to UTC.
 
----
-````
+---`
