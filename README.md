@@ -25,25 +25,45 @@ For price action traders, fundamental/news analysis is not a profit model — it
 
 ## Quickstart
 
-```bash
-# Clone and enter the project
-cd fnewsteer
+### Prerequisites
 
-# 2. Configure environment
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) installed
+
+1. Clone and enter the project
+
+```bash
+cd fnewsteer
+```
+
+2. Configure environment
+
+````bash
 cp .env.example .env
 # Edit .env — set FNEWSTEER_API_KEY at minimum
+```
 
-# 3. Install everything (single command, shared lockfile)
+3. Install everything (single command, shared lockfile)
+
+```bash
 uv sync
+```
 
-# 4. Run the API
+4. Run the API
+
+```bash
 uv run --package fnewsteer-api uvicorn main:app --reload
 # → http://localhost:8000/docs
+```
 
-# 5. Run the MCP server (stdio — for Claude Desktop)
+5. Run the MCP server (stdio — for Claude Desktop)
+
+```bash
 uv run --package fnewsteer-mcp python -m fnewsteer_mcp
+```
 
-# 5b. Run the MCP server (SSE — for remote clients)
+5b. Run the MCP server (SSE — for remote clients)
+
+```bash
 uv run --package fnewsteer-mcp python -m fnewsteer_mcp --transport sse
 # → http://localhost:8001
 ```
@@ -284,3 +304,4 @@ docker run -p 8001:8001 --env-file .env fnewsteer-mcp
 News data is sourced from the [ForexFactory](https://www.forexfactory.com/) JSON calendar feed and cached in memory for 60 minutes. All timestamps are normalized to UTC.
 
 ---
+````
