@@ -41,3 +41,4 @@ venv/
 .env
 ENV/
 .venv/
+app/
