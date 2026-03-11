@@ -1,0 +1,62 @@
+# =============================================================================
+# FNEWSTEER — Docker Compose
+# Runs the API and MCP SSE server together.
+#
+# Usage:
+#   docker compose up --build          # build and start both
+#   docker compose up --build api      # API only
+#   docker compose up --build mcp      # MCP only
+#   docker compose down                # stop and remove containers
+# =============================================================================
+
+services:
+  api:
+    build:
+      context: . # workspace root — both Dockerfiles need this
+      dockerfile: packages/api/Dockerfile
+    image: fnewsteer-api
+    container_name: fnewsteer-api
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python3',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  mcp:
+    build:
+      context: . # workspace root
+      dockerfile: packages/mcp/Dockerfile
+    image: fnewsteer-mcp
+    container_name: fnewsteer-mcp
+    ports:
+      - '8001:8001'
+    env_file:
+      - .env
+    environment:
+      - MCP_SSE_HOST=0.0.0.0
+      - MCP_SSE_PORT=8001
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python3',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
