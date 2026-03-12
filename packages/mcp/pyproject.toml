@@ -4,8 +4,7 @@ version = "0.1.0"
 description = "FNEWSTEER MCP server — news loss-prevention tools for AI agents"
 requires-python = ">=3.11"
 dependencies = [
-    "mcp[cli]>=1.0.0",
-    "python-dotenv>=1.0.0",
+    "mcp[cli]>=1.2.0,<2.0.0",
     "fnewsteer-api",
 ]
 
