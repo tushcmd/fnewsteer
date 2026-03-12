@@ -1,0 +1,40 @@
+# render.yaml — Render Blueprint
+# Defines both services declaratively. Commit this to your repo.
+# Render reads it automatically when you connect the repo.
+#
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # ── FastAPI REST API ──────────────────────────────────────────────────────
+  - type: web
+    name: fnewsteer-api
+    runtime: docker
+    dockerfilePath: packages/api/Dockerfile
+    dockerContext: . # workspace root — required for uv workspace
+    plan: free
+    region: oregon
+
+    healthCheckPath: /health
+
+    envVars:
+      - key: FNEWSTEER_API_KEY
+        sync: false # set manually in Render dashboard (never commit secrets)
+
+  # ── MCP SSE Server ────────────────────────────────────────────────────────
+  - type: web
+    name: fnewsteer-mcp
+    runtime: docker
+    dockerfilePath: packages/mcp/Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+
+    healthCheckPath: /health
+
+    envVars:
+      - key: FNEWSTEER_API_KEY
+        sync: false
+      - key: MCP_SSE_HOST
+        value: '0.0.0.0'
+      - key: MCP_SSE_PORT
+        value: '8001'
