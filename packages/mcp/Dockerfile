@@ -36,10 +36,10 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
-RUN adduser --disabled-password --gecos "" fnewsteer \
-    && chown -R fnewsteer:fnewsteer /app
+# RUN adduser --disabled-password --gecos "" fnewsteer \
+#     && chown -R fnewsteer:fnewsteer /app
 
-USER fnewsteer
+# USER fnewsteer
 
 EXPOSE 8001
 
