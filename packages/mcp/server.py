@@ -301,6 +301,9 @@ if __name__ == "__main__":
     logger.info("Starting FNEWSTEER MCP — transport: %s", transport)
 
     if transport == "sse":
-        mcp.run(transport="sse", host=host, port=port)
+        # mcp.run(transport="sse", host=host, port=port)
+        mcp.settings.host = host
+        mcp.settings.port = port
+        mcp.run(transport="sse")
     else:
         mcp.run(transport="stdio")
