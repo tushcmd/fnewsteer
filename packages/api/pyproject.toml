@@ -2,7 +2,7 @@
 name = "fnewsteer-api"
 version = "0.1.0"
 description = "Fundamental Analysis (News) Steer — loss-prevention API for price action traders"
-readme = "README.md"
+# readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi[standard]>=0.128.8",
