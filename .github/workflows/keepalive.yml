@@ -1,0 +1,24 @@
+name: Keepalive
+
+on:
+    schedule:
+        - cron: '*/14 * * * *' # every 14 minutes — just under Render's 15 min timeout
+    workflow_dispatch: # allow manual trigger from GitHub Actions UI
+
+jobs:
+    ping:
+        name: Ping services
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Ping API
+              run: |
+                  curl --fail --silent --show-error \
+                    "${{ secrets.RENDER_API_URL }}/health"
+                  echo "API OK"
+
+            - name: Ping MCP
+              run: |
+                  curl --fail --silent --show-error \
+                    "${{ secrets.RENDER_MCP_URL }}/health"
+                  echo "MCP OK"
