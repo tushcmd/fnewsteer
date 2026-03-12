@@ -21,6 +21,10 @@ from typing import Optional
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
+# Health check imports
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+
 # Import directly from the API service layer (workspace dependency)
 from app.services.calendar import cache_age_seconds, get_calendar, invalidate_cache
 from app.services.checker import build_blackout_zones, check_safe_to_trade, parse_symbol
@@ -77,6 +81,11 @@ def _fmt_event(event) -> str:
 
 
 # ── Tools ─────────────────────────────────────────────────────────────────────
+# Health route for external monitoring (e.g. uptime checks, load balancer probes)
+@mcp.custom_route("/health", methods=["GET"])
+async def health(request: Request) -> JSONResponse:
+    return JSONResponse({"status": "ok"})
+
 
 @mcp.tool()
 async def check_safe_to_trade_now(
