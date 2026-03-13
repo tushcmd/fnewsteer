@@ -313,7 +313,8 @@ if __name__ == "__main__":
 
     if transport == "sse":
         port = int(os.environ.get("PORT", os.environ.get("MCP_SSE_PORT", "10000")))
-        app = mcp.get_asgi_app()
+        app = mcp.streamable_http_app()
+        logger.info("FastMCP methods: %s", [m for m in dir(mcp) if 'app' in m.lower()])
         uvicorn.run(
             app,
             host="0.0.0.0",
