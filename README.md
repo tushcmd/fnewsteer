@@ -371,3 +371,9 @@ docker system prune          # remove dangling images/layers
 News data is sourced from the [ForexFactory](https://www.forexfactory.com/) JSON calendar feed and cached in memory for 60 minutes. All timestamps are normalized to UTC.
 
 ---
+
+## Support
+
+Open an issue on [GitHub](https://github.com/tushcmd/fnewsteer/issues) or reach out directly.
+
+---
