@@ -42,3 +42,4 @@ venv/
 ENV/
 .venv/
 app/
+.ruff_cache/
