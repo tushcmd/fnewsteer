@@ -20,7 +20,6 @@ from typing import Optional
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
-from mcp.server.fastmcp.settings import TransportSecuritySettings
 
 # Health check imports
 from starlette.requests import Request
@@ -49,10 +48,9 @@ mcp = FastMCP(
         "Treat a NOT SAFE result as a hard stop — never bypass it. "
         "Call get_server_health first in automated pipelines to verify data is available."
     ),
-    transport_security=TransportSecuritySettings(
-        enable_dns_rebinding_protection=False,
-    ),
 )
+
+mcp.settings.transport_security.enable_dns_rebinding_protection = False
 
 
 # ── Formatting helpers ────────────────────────────────────────────────────────
