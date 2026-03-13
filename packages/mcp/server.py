@@ -312,26 +312,11 @@ if __name__ == "__main__":
     logger.info("Starting FNEWSTEER MCP — transport: %s", transport)
 
     if transport == "sse":
-        port = int(os.environ.get("PORT", os.environ.get("MCP_SSE_PORT", "10000")))
+        port = int(os.environ.get("PORT", "10000"))
+        logger.info("FastMCP dir: %s", [a for a in dir(mcp) if not a.startswith('__')])
+        logger.info("FastMCP settings: %s", vars(mcp.settings))
         mcp.settings.host = "0.0.0.0"
         mcp.settings.port = port
-        # Patch uvicorn config to trust Render's proxy before running
-        # app = mcp.streamable_http_app()
-        # logger.info("FastMCP methods: %s", [m for m in dir(mcp) if 'app' in m.lower()])
-        # uvicorn.run(
-        #     app,
-        #     host="0.0.0.0",
-        #     port=port,
-        #     forwarded_allow_ips="*",
-        #     proxy_headers=True,
-        # )
-        import uvicorn
-        original_run = uvicorn.run
-        def patched_run(app, **kwargs):
-            kwargs["forwarded_allow_ips"] = "*"
-            kwargs["proxy_headers"] = True
-            return original_run(app, **kwargs)
-        uvicorn.run = patched_run
         mcp.run(transport="sse")
     else:
         mcp.run(transport="stdio")
