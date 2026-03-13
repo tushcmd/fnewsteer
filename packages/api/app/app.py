@@ -86,7 +86,7 @@ async def upcoming(
     currency: Optional[str] = Query(
         None,
         description="Single currency (USD) or pair (EURUSD). Filters events to relevant currencies.",
-        example="EURUSD",
+        examples={"default": "EURUSD"},
     ),
     include_medium: bool = Query(
         False,
@@ -137,7 +137,7 @@ async def check(
     symbol: str = Query(
         ...,
         description="Currency (USD) or pair (EURUSD) to check.",
-        example="EURUSD",
+        examples={"default": "EURUSD"},
     ),
     include_medium: bool = Query(
         False,
@@ -178,7 +178,7 @@ async def blackout_zones(
     currency: Optional[str] = Query(
         None,
         description="Single currency (USD) or pair (EURUSD). Omit for all currencies.",
-        example="GBPUSD",
+        examples={"default": "GBPUSD"},
     ),
     include_medium: bool = Query(
         False,
