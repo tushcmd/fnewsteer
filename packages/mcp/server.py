@@ -20,6 +20,7 @@ from typing import Optional
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.settings import TransportSecuritySettings
 
 # Health check imports
 from starlette.requests import Request
@@ -47,6 +48,9 @@ mcp = FastMCP(
         "Always call check_safe_to_trade before any trade action. "
         "Treat a NOT SAFE result as a hard stop — never bypass it. "
         "Call get_server_health first in automated pipelines to verify data is available."
+    ),
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=False,
     ),
 )
 
@@ -298,23 +302,16 @@ async def get_server_health() -> str:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    import uvicorn
-    
     transport = "stdio"
     if "--transport" in sys.argv:
         idx = sys.argv.index("--transport")
         if idx + 1 < len(sys.argv):
             transport = sys.argv[idx + 1]
 
-    # host = os.environ.get("MCP_SSE_HOST", "0.0.0.0")
-    # port = int(os.environ.get("MCP_SSE_PORT", "8001"))
-
     logger.info("Starting FNEWSTEER MCP — transport: %s", transport)
 
     if transport == "sse":
-        port = int(os.environ.get("PORT", "10000"))
-        logger.info("FastMCP dir: %s", [a for a in dir(mcp) if not a.startswith('__')])
-        logger.info("FastMCP settings: %s", vars(mcp.settings))
+        port = int(os.environ.get("PORT", os.environ.get("MCP_SSE_PORT", "10000")))
         mcp.settings.host = "0.0.0.0"
         mcp.settings.port = port
         mcp.run(transport="sse")
