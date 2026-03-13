@@ -43,3 +43,4 @@ ENV/
 .venv/
 app/
 .ruff_cache/
+.github/

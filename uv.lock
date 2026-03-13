@@ -337,12 +337,18 @@ source = { editable = "packages/mcp" }
 dependencies = [
     { name = "fnewsteer-api" },
     { name = "mcp", extra = ["cli"] },
+    { name = "python-dotenv" },
+    { name = "starlette" },
+    { name = "uvicorn", extra = ["standard"] },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fnewsteer-api", editable = "packages/api" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.2.0,<2.0.0" },
+    { name = "python-dotenv", specifier = ">=1.2.0" },
+    { name = "starlette", specifier = ">=0.41.0" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.40.0" },
 ]
 
 [[package]]

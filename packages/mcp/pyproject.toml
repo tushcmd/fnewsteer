@@ -6,6 +6,9 @@ requires-python = ">=3.11"
 dependencies = [
     "mcp[cli]>=1.2.0,<2.0.0",
     "fnewsteer-api",
+    "python-dotenv>=1.2.0",
+    "uvicorn[standard]>=0.40.0",
+    "starlette>=0.41.0",
 ]
 
 [tool.uv.sources]

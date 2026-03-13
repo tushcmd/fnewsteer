@@ -298,21 +298,28 @@ async def get_server_health() -> str:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    import uvicorn
+    
     transport = "stdio"
     if "--transport" in sys.argv:
         idx = sys.argv.index("--transport")
         if idx + 1 < len(sys.argv):
             transport = sys.argv[idx + 1]
 
-    host = os.environ.get("MCP_SSE_HOST", "0.0.0.0")
-    port = int(os.environ.get("MCP_SSE_PORT", "8001"))
+    # host = os.environ.get("MCP_SSE_HOST", "0.0.0.0")
+    # port = int(os.environ.get("MCP_SSE_PORT", "8001"))
 
     logger.info("Starting FNEWSTEER MCP — transport: %s", transport)
 
     if transport == "sse":
-        # mcp.run(transport="sse", host=host, port=port)
-        mcp.settings.host = host
-        mcp.settings.port = port
-        mcp.run(transport="sse")
+        port = int(os.environ.get("PORT", os.environ.get("MCP_SSE_PORT", "10000")))
+        app = mcp.get_asgi_app()
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=port,
+            forwarded_allow_ips="*",
+            proxy_headers=True,
+        )
     else:
         mcp.run(transport="stdio")
