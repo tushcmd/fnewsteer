@@ -71,9 +71,12 @@ def _fmt_blocking(event) -> str:
 
 def _fmt_event(event) -> str:
     extras = ""
-    if event.actual:   extras += f" | Actual: {event.actual}"
-    if event.forecast: extras += f" | Forecast: {event.forecast}"
-    if event.previous: extras += f" | Previous: {event.previous}"
+    if event.actual:
+        extras += f" | Actual: {event.actual}"
+    if event.forecast:
+        extras += f" | Forecast: {event.forecast}"
+    if event.previous:
+        extras += f" | Previous: {event.previous}"
     return (
         f"  • {event.title} ({event.currency}) [{event.impact} Impact]\n"
         f"    Event time : {event.event_time.isoformat()}\n"

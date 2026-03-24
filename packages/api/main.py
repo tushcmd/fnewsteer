@@ -1,7 +1,7 @@
 import uvicorn
 
 # Import FastAPI app so that `uvicorn main:app` works and tests can access the application.
-from app.app import app
+# from app.app import app
 
 if __name__ == "__main__":
     # When run as a script we still delegate to uvicorn using the full module path.
