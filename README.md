@@ -377,3 +377,7 @@ News data is sourced from the [ForexFactory](https://www.forexfactory.com/) JSON
 Open an issue on [GitHub](https://github.com/tushcmd/fnewsteer/issues) or reach out directly.
 
 ---
+
+## Related
+
+- [FNEWSTEER Chrome Extension](https://github.com/tushcmd/fnewsteer-ce)
