@@ -5,6 +5,7 @@ from typing import Annotated, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Security, status
 from fastapi.security.api_key import APIKeyHeader
+from fastapi.routing import APIRouter
 
 # use package-qualified imports so modules run inside `uvicorn` subprocesses
 from app.schemas.event_models import BlackoutZonesResponse, CheckResponse, UpcomingNewsResponse
@@ -61,6 +62,8 @@ AuthDep = Annotated[str, Depends(verify_api_key)]
 # Routes
 # ---------------------------------------------------------------------------
 
+# ── Versioned router ──────────────────────────────────────────────────────────
+v1 = APIRouter(prefix="/v1")
 
 @app.get("/", include_in_schema=False)
 async def root():
@@ -71,7 +74,7 @@ async def root():
     }
 
 
-@app.get(
+@v1.get(
     "/news/upcoming",
     response_model=UpcomingNewsResponse,
     summary="Full week calendar",
@@ -120,7 +123,7 @@ async def upcoming(
     )
 
 
-@app.get(
+@v1.get(
     "/news/check",
     response_model=CheckResponse,
     summary="Safe-to-trade check",
@@ -161,7 +164,7 @@ async def check(
     return check_safe_to_trade(events, symbol)
 
 
-@app.get(
+@v1.get(
     "/news/blackout-zones",
     response_model=BlackoutZonesResponse,
     summary="Blackout zones for the week",
@@ -235,3 +238,5 @@ async def health():
 async def refresh_cache(_: AuthDep):
     invalidate_cache()
     return {"message": "Cache invalidated. Next request will fetch fresh data from ForexFactory."}
+
+app.include_router(v1)
