@@ -1,13 +1,27 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../../src/theme/colors';
-import { StatusBadge, EventCard } from '../../src/components';
-import { configure, fetchCheck, fetchUpcoming, CheckResponse, NewsEvent } from '../../src/api';
-import { loadSettings } from '../../src/storage';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { StatusBadge, EventCard } from "../../src/components";
+import {
+  configure,
+  fetchCheck,
+  fetchUpcoming,
+  CheckResponse,
+  NewsEvent,
+} from "../../src/api";
+import { loadSettings } from "../../src/storage";
 
 export default function CheckScreen() {
-  const [pair, setPair] = useState('EURUSD');
+  const [pair, setPair] = useState("EURUSD");
   const [checkResult, setCheckResult] = useState<CheckResponse | null>(null);
   const [upcoming, setUpcoming] = useState<NewsEvent[]>([]);
   const [loading, setLoading] = useState(false);
@@ -64,66 +78,102 @@ export default function CheckScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView className="flex-1 bg-[#0a0a0a]" edges={["top"]}>
       <ScrollView
-        contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.blue} />}
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#3b82f6"
+          />
+        }
       >
-        <Text style={styles.heading}>FNEWSTEER</Text>
-        <Text style={styles.subheading}>Don't paddle out into a hurricane unaware.</Text>
+        <Text className="text-white text-3xl font-extrabold tracking-widest mb-1">
+          FNEWSTEER
+        </Text>
+        <Text className="text-gray-400 text-[13px] mb-5 italic">
+          Don't paddle out into a hurricane unaware.
+        </Text>
 
-        <View style={styles.inputRow}>
+        <View className="flex-row gap-2.5 mb-5">
           <TextInput
-            style={styles.input}
+            className="flex-1 bg-[#141414] border border-[#2a2a2a] rounded-xl px-3.5 py-3 text-white text-base font-semibold tracking-wider"
             value={pair}
             onChangeText={setPair}
             placeholder="EURUSD"
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor="#888888"
             autoCapitalize="characters"
             autoCorrect={false}
           />
-          <TouchableOpacity style={styles.button} onPress={handleCheck} disabled={loading}>
-            <Text style={styles.buttonText}>CHECK</Text>
+          <TouchableOpacity
+            className="bg-blue-500 rounded-xl px-5 justify-center"
+            onPress={handleCheck}
+            disabled={loading}
+          >
+            <Text className="text-white font-bold text-sm tracking-wider">
+              CHECK
+            </Text>
           </TouchableOpacity>
         </View>
 
         {loading && !refreshing && (
-          <ActivityIndicator size="large" color={colors.blue} style={styles.loader} />
+          <ActivityIndicator
+            size="large"
+            color="#3b82f6"
+            style={{ marginVertical: 20 }}
+          />
         )}
 
         {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+          <View className="bg-red-900/60 border border-red-500 rounded-xl p-3.5 mb-4">
+            <Text className="text-red-500 text-[13px]">{error}</Text>
           </View>
         )}
 
         {checkResult && !loading && (
           <>
-            <StatusBadge safe={checkResult.safe_to_trade} symbol={checkResult.symbol} />
-            {!checkResult.safe_to_trade && checkResult.blocking_events.length > 0 && (
-              <View style={styles.blockingSection}>
-                <Text style={styles.sectionTitle}>Blocking Events</Text>
-                {checkResult.blocking_events.map((evt, i) => (
-                  <View key={i} style={styles.blockingItem}>
-                    <Text style={styles.blockingTitle}>{evt.title}</Text>
-                    <Text style={styles.blockingMeta}>
-                      {evt.currency} · {evt.impact} ·{' '}
-                      {evt.minutes_to_event !== null
-                        ? evt.minutes_to_event > 0
-                          ? `${Math.round(evt.minutes_to_event)}m away`
-                          : `${Math.abs(Math.round(evt.minutes_to_event))}m ago`
-                        : ''}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
+            <StatusBadge
+              safe={checkResult.safe_to_trade}
+              symbol={checkResult.symbol}
+            />
+            {!checkResult.safe_to_trade &&
+              checkResult.blocking_events.length > 0 && (
+                <View className="mt-4">
+                  <Text className="text-white text-lg font-bold mb-2.5">
+                    Blocking Events
+                  </Text>
+                  {checkResult.blocking_events.map((evt, i) => (
+                    <View
+                      key={i}
+                      className="bg-[#141414] rounded-lg p-3 mb-2 border border-[#2a2a2a]"
+                    >
+                      <Text className="text-white text-sm font-semibold">
+                        {evt.title}
+                      </Text>
+                      <Text className="text-gray-400 text-xs mt-0.5">
+                        {evt.currency} · {evt.impact} ·{" "}
+                        {evt.minutes_to_event !== null
+                          ? evt.minutes_to_event > 0
+                            ? `${Math.round(evt.minutes_to_event)}m away`
+                            : `${Math.abs(
+                                Math.round(evt.minutes_to_event)
+                              )}m ago`
+                          : ""}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
           </>
         )}
 
         {upcoming.length > 0 && !loading && (
-          <View style={styles.eventsSection}>
-            <Text style={styles.sectionTitle}>Upcoming Events</Text>
+          <View className="mt-6">
+            <Text className="text-white text-lg font-bold mb-2.5">
+              Upcoming Events
+            </Text>
             {upcoming.map((evt, i) => (
               <EventCard key={i} event={evt} />
             ))}
@@ -133,102 +183,3 @@ export default function CheckScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  scroll: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  heading: {
-    color: colors.text,
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: 2,
-    marginBottom: 4,
-  },
-  subheading: {
-    color: colors.textMuted,
-    fontSize: 13,
-    marginBottom: 20,
-    fontStyle: 'italic',
-  },
-  inputRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: 1,
-  },
-  button: {
-    backgroundColor: colors.blue,
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
-    letterSpacing: 1,
-  },
-  loader: {
-    marginVertical: 20,
-  },
-  errorBox: {
-    backgroundColor: colors.redDim,
-    borderWidth: 1,
-    borderColor: colors.red,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: colors.red,
-    fontSize: 13,
-  },
-  blockingSection: {
-    marginTop: 16,
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 10,
-  },
-  blockingItem: {
-    backgroundColor: colors.surface,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  blockingTitle: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  blockingMeta: {
-    color: colors.textMuted,
-    fontSize: 12,
-    marginTop: 2,
-  },
-  eventsSection: {
-    marginTop: 24,
-  },
-});

@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../../src/theme/colors';
-import { loadSettings, saveSettings } from '../../src/storage';
-import { configure, fetchHealth } from '../../src/api';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { loadSettings, saveSettings } from "../../src/storage";
+import { configure, fetchHealth } from "../../src/api";
 
 export default function SettingsScreen() {
-  const [baseUrl, setBaseUrl] = useState('http://localhost:8000');
-  const [apiKey, setApiKey] = useState('');
-  const [pair, setPair] = useState('EURUSD');
+  const [baseUrl, setBaseUrl] = useState("https://fnewsteer-api.onrender.com");
+  const [apiKey, setApiKey] = useState("");
+  const [pair, setPair] = useState("EURUSD");
   const [saved, setSaved] = useState(false);
   const [healthStatus, setHealthStatus] = useState<string | null>(null);
 
@@ -31,7 +37,9 @@ export default function SettingsScreen() {
       configure(baseUrl, apiKey);
       const health = await fetchHealth();
       setHealthStatus(
-        `Connected! Cache ${health.cache_populated ? 'populated' : 'empty'} (${health.cache_age_seconds ?? '—'}s)`
+        `Connected! Cache ${
+          health.cache_populated ? "populated" : "empty"
+        } (${health.cache_age_seconds ?? "—"}s)`
       );
     } catch (e: any) {
       setHealthStatus(`Error: ${e.message}`);
@@ -39,172 +47,109 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.heading}>Settings</Text>
+    <SafeAreaView className="flex-1 bg-[#0a0a0a]" edges={["top"]}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+      >
+        <Text className="text-white text-2xl font-extrabold tracking-wider mb-6">
+          Settings
+        </Text>
 
-        <Text style={styles.label}>API Base URL</Text>
+        <Text className="text-gray-400 text-xs font-semibold tracking-wide uppercase mb-1.5">
+          API Base URL
+        </Text>
         <TextInput
-          style={styles.input}
+          className="bg-[#141414] border border-[#2a2a2a] rounded-xl px-3.5 py-3 text-white text-[15px] mb-4"
           value={baseUrl}
           onChangeText={setBaseUrl}
-          placeholder="http://localhost:8000"
-          placeholderTextColor={colors.textMuted}
+          placeholder="https://fnewsteer-api.onrender.com"
+          placeholderTextColor="#888888"
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="url"
         />
 
-        <Text style={styles.label}>API Key</Text>
+        <Text className="text-gray-400 text-xs font-semibold tracking-wide uppercase mb-1.5">
+          API Key
+        </Text>
         <TextInput
-          style={styles.input}
+          className="bg-[#141414] border border-[#2a2a2a] rounded-xl px-3.5 py-3 text-white text-[15px] mb-4"
           value={apiKey}
           onChangeText={setApiKey}
           placeholder="your-api-key"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor="#888888"
           autoCapitalize="none"
           autoCorrect={false}
           secureTextEntry
         />
 
-        <Text style={styles.label}>Default Pair</Text>
+        <Text className="text-gray-400 text-xs font-semibold tracking-wide uppercase mb-1.5">
+          Default Pair
+        </Text>
         <TextInput
-          style={styles.input}
+          className="bg-[#141414] border border-[#2a2a2a] rounded-xl px-3.5 py-3 text-white text-[15px] mb-5"
           value={pair}
           onChangeText={setPair}
           placeholder="EURUSD"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor="#888888"
           autoCapitalize="characters"
           autoCorrect={false}
         />
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>{saved ? 'Saved!' : 'Save'}</Text>
+        <View className="flex-row gap-2.5 mb-4">
+          <TouchableOpacity
+            className="flex-1 bg-blue-500 rounded-xl py-3.5 items-center"
+            onPress={handleSave}
+          >
+            <View className="flex-row items-center gap-2">
+              <Ionicons
+                name={saved ? "checkmark-circle" : "save"}
+                size={18}
+                color="white"
+              />
+              <Text className="text-white font-bold text-[15px]">
+                {saved ? "Saved!" : "Save"}
+              </Text>
+            </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.testButton} onPress={handleTestConnection}>
-            <Text style={styles.testButtonText}>Test Connection</Text>
+          <TouchableOpacity
+            className="flex-1 bg-[#1e1e1e] rounded-xl py-3.5 items-center border border-[#2a2a2a]"
+            onPress={handleTestConnection}
+          >
+            <View className="flex-row items-center gap-2">
+              <Ionicons name="pulse" size={18} color="white" />
+              <Text className="text-white font-semibold text-[15px]">
+                Test Connection
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
 
         {healthStatus && (
-          <View style={[styles.healthBox, healthStatus.startsWith('Error') ? styles.healthError : styles.healthOk]}>
-            <Text style={styles.healthText}>{healthStatus}</Text>
+          <View
+            className={`rounded-xl p-3.5 mb-6 border ${
+              healthStatus.startsWith("Error")
+                ? "bg-red-900/60 border-red-500"
+                : "bg-green-900/60 border-green-500"
+            }`}
+          >
+            <Text className="text-white text-[13px]">{healthStatus}</Text>
           </View>
         )}
 
-        <View style={styles.infoSection}>
-          <Text style={styles.infoTitle}>About</Text>
-          <Text style={styles.infoText}>
-            FNEWSTEER tells your algo bot when NOT to trade by flagging high-impact news blackout windows.
+        <View className="border-t border-[#2a2a2a] pt-5 gap-2">
+          <Text className="text-white text-base font-bold">About</Text>
+          <Text className="text-gray-400 text-[13px] leading-[18px]">
+            FNEWSTEER tells your algo bot when NOT to trade by flagging
+            high-impact news blackout windows.
           </Text>
-          <Text style={styles.infoText}>
-            Configure your API URL and key above. The app connects to your FNEWSTEER API instance.
+          <Text className="text-gray-400 text-[13px] leading-[18px]">
+            Configure your API URL and key above. The app connects to your
+            FNEWSTEER API instance.
           </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  scroll: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  heading: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: '800',
-    letterSpacing: 1,
-    marginBottom: 24,
-  },
-  label: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    marginBottom: 6,
-    textTransform: 'uppercase',
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: colors.text,
-    fontSize: 15,
-    marginBottom: 16,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 16,
-  },
-  saveButton: {
-    flex: 1,
-    backgroundColor: colors.blue,
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 15,
-  },
-  testButton: {
-    flex: 1,
-    backgroundColor: colors.surfaceLight,
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  testButtonText: {
-    color: colors.text,
-    fontWeight: '600',
-    fontSize: 15,
-  },
-  healthBox: {
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 24,
-    borderWidth: 1,
-  },
-  healthOk: {
-    backgroundColor: colors.greenDim,
-    borderColor: colors.green,
-  },
-  healthError: {
-    backgroundColor: colors.redDim,
-    borderColor: colors.red,
-  },
-  healthText: {
-    fontSize: 13,
-    color: colors.text,
-  },
-  infoSection: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: 20,
-    gap: 8,
-  },
-  infoTitle: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  infoText: {
-    color: colors.textMuted,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-});

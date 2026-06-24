@@ -1,19 +1,35 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../../src/theme/colors';
-import { EventCard } from '../../src/components';
-import { configure, fetchUpcoming, NewsEvent } from '../../src/api';
-import { loadSettings } from '../../src/storage';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { EventCard } from "../../src/components";
+import { configure, fetchUpcoming, NewsEvent } from "../../src/api";
+import { loadSettings } from "../../src/storage";
 
-const CURRENCIES = ['All', 'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'NZD', 'CAD', 'CHF'];
+const CURRENCIES = [
+  "All",
+  "USD",
+  "EUR",
+  "GBP",
+  "JPY",
+  "AUD",
+  "NZD",
+  "CAD",
+  "CHF",
+];
 
 export default function EventsScreen() {
   const [events, setEvents] = useState<NewsEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState("All");
   const [includeMedium, setIncludeMedium] = useState(false);
 
   const loadEvents = useCallback(async () => {
@@ -21,7 +37,7 @@ export default function EventsScreen() {
     try {
       const settings = await loadSettings();
       configure(settings.baseUrl, settings.apiKey);
-      const currency = filter === 'All' ? undefined : filter;
+      const currency = filter === "All" ? undefined : filter;
       const res = await fetchUpcoming({ currency, includeMedium });
       setEvents(res.events);
     } catch (e: any) {
@@ -43,124 +59,89 @@ export default function EventsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <Text style={styles.heading}>Week Calendar</Text>
+    <SafeAreaView className="flex-1 bg-[#0a0a0a]" edges={["top"]}>
+      <Text className="text-white text-2xl font-extrabold tracking-wider px-4 pt-2 pb-3">
+        Week Calendar
+      </Text>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12, gap: 8 }}
+      >
         {CURRENCIES.map((c) => (
           <TouchableOpacity
             key={c}
-            style={[styles.filterChip, filter === c && styles.filterChipActive]}
+            className={`px-3.5 py-1.5 rounded-full border ${
+              filter === c
+                ? "bg-blue-500 border-blue-500"
+                : "bg-[#141414] border-[#2a2a2a]"
+            }`}
             onPress={() => setFilter(c)}
           >
-            <Text style={[styles.filterText, filter === c && styles.filterTextActive]}>{c}</Text>
+            <Text
+              className={`text-[13px] font-semibold ${
+                filter === c ? "text-white" : "text-gray-400"
+              }`}
+            >
+              {c}
+            </Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity
-          style={[styles.filterChip, includeMedium && styles.filterChipMedium]}
+          className={`px-3.5 py-1.5 rounded-full border ${
+            includeMedium
+              ? "bg-yellow-900/60 border-yellow-500"
+              : "bg-[#141414] border-[#2a2a2a]"
+          }`}
           onPress={() => setIncludeMedium(!includeMedium)}
         >
-          <Text style={[styles.filterText, includeMedium && styles.filterTextActive]}>+Medium</Text>
+          <Text
+            className={`text-[13px] font-semibold ${
+              includeMedium ? "text-yellow-500" : "text-gray-400"
+            }`}
+          >
+            +Medium
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
       {loading && !refreshing ? (
-        <ActivityIndicator size="large" color={colors.blue} style={styles.loader} />
+        <ActivityIndicator
+          size="large"
+          color="#3b82f6"
+          style={{ flex: 1, justifyContent: "center" }}
+        />
       ) : (
         <ScrollView
-          contentContainerStyle={styles.scroll}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.blue} />}
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#3b82f6"
+            />
+          }
         >
           {error && (
-            <View style={styles.errorBox}>
-              <Text style={styles.errorText}>{error}</Text>
+            <View className="bg-red-900/60 border border-red-500 rounded-xl p-3.5 mb-4">
+              <Text className="text-red-500 text-[13px]">{error}</Text>
             </View>
           )}
-          <Text style={styles.count}>{events.length} event{events.length !== 1 ? 's' : ''}</Text>
+          <Text className="text-gray-400 text-[13px] mb-3">
+            {events.length} event{events.length !== 1 ? "s" : ""}
+          </Text>
           {events.map((evt, i) => (
             <EventCard key={`${evt.title}-${evt.event_time}-${i}`} event={evt} />
           ))}
           {events.length === 0 && !error && (
-            <Text style={styles.empty}>No events found.</Text>
+            <Text className="text-gray-400 text-sm text-center mt-10">
+              No events found.
+            </Text>
           )}
         </ScrollView>
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  heading: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: '800',
-    letterSpacing: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-  filterRow: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  filterChipActive: {
-    backgroundColor: colors.blue,
-    borderColor: colors.blue,
-  },
-  filterChipMedium: {
-    backgroundColor: colors.yellowDim,
-    borderColor: colors.yellow,
-  },
-  filterText: {
-    color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  filterTextActive: {
-    color: '#fff',
-  },
-  scroll: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  errorBox: {
-    backgroundColor: colors.redDim,
-    borderWidth: 1,
-    borderColor: colors.red,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: colors.red,
-    fontSize: 13,
-  },
-  count: {
-    color: colors.textMuted,
-    fontSize: 13,
-    marginBottom: 12,
-  },
-  empty: {
-    color: colors.textMuted,
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 40,
-  },
-});

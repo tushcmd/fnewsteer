@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../../src/theme/colors';
-import { ZoneCard } from '../../src/components';
-import { configure, fetchBlackoutZones, BlackoutZone } from '../../src/api';
-import { loadSettings } from '../../src/storage';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ZoneCard } from "../../src/components";
+import { configure, fetchBlackoutZones, BlackoutZone } from "../../src/api";
+import { loadSettings } from "../../src/storage";
 
 export default function ZonesScreen() {
   const [zones, setZones] = useState<BlackoutZone[]>([]);
@@ -39,40 +45,63 @@ export default function ZonesScreen() {
   };
 
   const now = new Date();
-  const activeZones = zones.filter(z => now >= new Date(z.start) && now <= new Date(z.end));
-  const upcomingZones = zones.filter(z => new Date(z.start) > now);
+  const activeZones = zones.filter(
+    (z) => now >= new Date(z.start) && now <= new Date(z.end)
+  );
+  const upcomingZones = zones.filter((z) => new Date(z.start) > now);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <Text style={styles.heading}>Blackout Zones</Text>
+    <SafeAreaView className="flex-1 bg-[#0a0a0a]" edges={["top"]}>
+      <Text className="text-white text-2xl font-extrabold tracking-wider px-4 pt-2 pb-3">
+        Blackout Zones
+      </Text>
 
-      <View style={styles.toggleRow}>
+      <View className="px-4 pb-3">
         <TouchableOpacity
-          style={[styles.toggle, includeMedium && styles.toggleActive]}
+          className={`px-4 py-2 rounded-full border self-start ${
+            includeMedium
+              ? "bg-yellow-900/60 border-yellow-500"
+              : "bg-[#141414] border-[#2a2a2a]"
+          }`}
           onPress={() => setIncludeMedium(!includeMedium)}
         >
-          <Text style={[styles.toggleText, includeMedium && styles.toggleTextActive]}>
+          <Text
+            className={`text-[13px] font-semibold ${
+              includeMedium ? "text-yellow-500" : "text-gray-400"
+            }`}
+          >
             Include Medium Impact
           </Text>
         </TouchableOpacity>
       </View>
 
       {loading && !refreshing ? (
-        <ActivityIndicator size="large" color={colors.blue} style={styles.loader} />
+        <ActivityIndicator
+          size="large"
+          color="#3b82f6"
+          style={{ flex: 1, justifyContent: "center" }}
+        />
       ) : (
         <ScrollView
-          contentContainerStyle={styles.scroll}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.blue} />}
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#3b82f6"
+            />
+          }
         >
           {error && (
-            <View style={styles.errorBox}>
-              <Text style={styles.errorText}>{error}</Text>
+            <View className="bg-red-900/60 border border-red-500 rounded-xl p-3.5 mb-4">
+              <Text className="text-red-500 text-[13px]">{error}</Text>
             </View>
           )}
 
           {activeZones.length > 0 && (
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.red }]}>
+            <View className="mb-5">
+              <Text className="text-red-500 text-base font-bold mb-2.5 tracking-wide">
                 ACTIVE NOW ({activeZones.length})
               </Text>
               {activeZones.map((z, i) => (
@@ -82,8 +111,8 @@ export default function ZonesScreen() {
           )}
 
           {upcomingZones.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
+            <View className="mb-5">
+              <Text className="text-white text-base font-bold mb-2.5 tracking-wide">
                 Upcoming ({upcomingZones.length})
               </Text>
               {upcomingZones.map((z, i) => (
@@ -93,87 +122,12 @@ export default function ZonesScreen() {
           )}
 
           {zones.length === 0 && !error && (
-            <Text style={styles.empty}>No blackout zones this week.</Text>
+            <Text className="text-gray-400 text-sm text-center mt-10">
+              No blackout zones this week.
+            </Text>
           )}
         </ScrollView>
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  heading: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: '800',
-    letterSpacing: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-  toggleRow: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  toggle: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignSelf: 'flex-start',
-  },
-  toggleActive: {
-    backgroundColor: colors.yellowDim,
-    borderColor: colors.yellow,
-  },
-  toggleText: {
-    color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  toggleTextActive: {
-    color: colors.yellow,
-  },
-  scroll: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  errorBox: {
-    backgroundColor: colors.redDim,
-    borderWidth: 1,
-    borderColor: colors.red,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: colors.red,
-    fontSize: 13,
-  },
-  section: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 10,
-    letterSpacing: 0.5,
-  },
-  empty: {
-    color: colors.textMuted,
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 40,
-  },
-});

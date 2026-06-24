@@ -13,7 +13,7 @@ export async function loadSettings(): Promise<{ baseUrl: string; apiKey: string;
     AsyncStorage.getItem(KEYS.PAIR),
   ]);
   return {
-    baseUrl: baseUrl || 'http://localhost:8000',
+    baseUrl: baseUrl || 'https://fnewsteer-api.onrender.com',
     apiKey: apiKey || '',
     pair: pair || 'EURUSD',
   };

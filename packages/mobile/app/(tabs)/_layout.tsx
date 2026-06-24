@@ -1,6 +1,5 @@
-import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
-import { colors } from '../../src/theme/colors';
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TabLayout() {
   return (
@@ -8,47 +7,55 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          backgroundColor: "#141414",
+          borderTopColor: "#2a2a2a",
           borderTopWidth: 1,
           height: 60,
           paddingBottom: 8,
           paddingTop: 4,
         },
-        tabBarActiveTintColor: colors.blue,
-        tabBarInactiveTintColor: colors.textMuted,
+        tabBarActiveTintColor: "#3b82f6",
+        tabBarInactiveTintColor: "#888888",
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: "600",
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Check',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>⚡</Text>,
+          title: "Check",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="flash" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="events"
         options={{
-          title: 'Events',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>📅</Text>,
+          title: "Events",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="zones"
         options={{
-          title: 'Zones',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>🚫</Text>,
+          title: "Zones",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="ban" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>⚙️</Text>,
+          title: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

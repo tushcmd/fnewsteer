@@ -1,24 +1,26 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../theme/colors';
-import { BlackoutZone } from '../api/types';
+import React from "react";
+import { View, Text } from "react-native";
+import { BlackoutZone } from "../api/types";
 
 function formatTime(iso: string) {
   const d = new Date(iso);
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
 function formatDate(iso: string) {
   const d = new Date(iso);
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   return `${days[d.getDay()]} ${d.getDate()}`;
 }
 
-function impactColor(impact: string) {
+function impactDot(impact: string) {
   switch (impact) {
-    case 'High': return colors.high;
-    case 'Medium': return colors.medium;
-    default: return colors.low;
+    case "High":
+      return "bg-red-500";
+    case "Medium":
+      return "bg-yellow-500";
+    default:
+      return "bg-gray-500";
   }
 }
 
@@ -30,79 +32,39 @@ export function ZoneCard({ zone }: { zone: BlackoutZone }) {
   const isPast = now > end;
 
   return (
-    <View style={[styles.card, isActive && styles.cardActive, isPast && styles.cardPast]}>
-      <View style={styles.header}>
-        <View style={[styles.dot, { backgroundColor: impactColor(zone.impact) }]} />
-        <Text style={styles.currency}>{zone.currency}</Text>
-        <Text style={styles.date}>{formatDate(zone.start)}</Text>
+    <View
+      className={`bg-[#141414] rounded-xl p-3.5 mb-2.5 border ${
+        isActive
+          ? "border-red-500 bg-red-950/30"
+          : isPast
+          ? "border-[#2a2a2a] opacity-50"
+          : "border-[#2a2a2a]"
+      }`}
+    >
+      <View className="flex-row items-center mb-1.5 gap-2">
+        <View className={`w-2.5 h-2.5 rounded-full ${impactDot(zone.impact)}`} />
+        <Text className="text-blue-500 text-[13px] font-bold">
+          {zone.currency}
+        </Text>
+        <Text className="text-gray-400 text-xs ml-auto">
+          {formatDate(zone.start)}
+        </Text>
       </View>
-      <Text style={styles.title}>{zone.event}</Text>
-      <View style={styles.timeRow}>
-        <Text style={styles.time}>
+
+      <Text className="text-white text-sm font-semibold mb-1">
+        {zone.event}
+      </Text>
+
+      <View className="flex-row items-center justify-between">
+        <Text className="text-gray-400 text-[13px]">
           {formatTime(zone.start)} – {formatTime(zone.end)}
         </Text>
-        {isActive && <Text style={styles.active}>ACTIVE</Text>}
+        {isActive && (
+          <Text className="text-red-500 text-[11px] font-extrabold tracking-widest">
+            ACTIVE
+          </Text>
+        )}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  cardActive: {
-    borderColor: colors.red,
-    backgroundColor: '#1a0a0a',
-  },
-  cardPast: {
-    opacity: 0.5,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    gap: 8,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  currency: {
-    color: colors.blue,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  date: {
-    color: colors.textMuted,
-    fontSize: 12,
-    marginLeft: 'auto',
-  },
-  title: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  timeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  time: {
-    color: colors.textMuted,
-    fontSize: 13,
-  },
-  active: {
-    color: colors.red,
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 1,
-  },
-});

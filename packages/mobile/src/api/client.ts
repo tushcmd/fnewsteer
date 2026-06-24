@@ -1,6 +1,6 @@
 import { NewsEvent, CheckResponse, BlackoutZonesResponse } from './types';
 
-const DEFAULT_BASE_URL = 'http://localhost:8000';
+const DEFAULT_BASE_URL = 'https://fnewsteer-api.onrender.com';
 
 let baseUrl = DEFAULT_BASE_URL;
 let apiKey = '';
